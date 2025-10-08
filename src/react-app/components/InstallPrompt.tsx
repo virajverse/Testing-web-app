@@ -4,21 +4,21 @@ import { usePWA } from '../hooks/usePWA';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const InstallPrompt = () => {
-  const { isInstalled, installApp } = usePWA();
+  const { isInstallable, isInstalled, installApp } = usePWA();
   const { t } = useLanguage();
   const [showPrompt, setShowPrompt] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    // Show prompt after 3 seconds if not installed and not dismissed
+    // Only show prompt if native install is available and not dismissed
     const timer = setTimeout(() => {
-      if (!isInstalled && !dismissed) {
+      if (isInstallable && !isInstalled && !dismissed) {
         setShowPrompt(true);
       }
-    }, 3000);
+    }, 5000); // Wait 5 seconds to let user explore first
 
     return () => clearTimeout(timer);
-  }, [isInstalled, dismissed]);
+  }, [isInstallable, isInstalled, dismissed]);
 
   const handleDismiss = () => {
     setDismissed(true);
@@ -30,7 +30,8 @@ const InstallPrompt = () => {
     setShowPrompt(false);
   };
 
-  if (!showPrompt || isInstalled) return null;
+  // Only show if native install is available and not installed
+  if (!showPrompt || !isInstallable || isInstalled) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50 animate-slide-up">

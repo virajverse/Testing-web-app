@@ -4,7 +4,7 @@ import { Download } from 'lucide-react';
 
 const Hero = () => {
   const { t } = useLanguage();
-  const { isInstalled, installApp } = usePWA();
+  const { isInstallable, isInstalled, installApp } = usePWA();
 
   return (
     <section className="bg-gradient-to-br from-blue-50 to-indigo-100 py-16 px-4">
@@ -16,12 +16,13 @@ const Hero = () => {
           {t('hero.subtitle')}
         </p>
         
-        {/* Install App Button - Prominent */}
-        {!isInstalled && (
+        {/* Install App Button - Only show when native prompt is available */}
+        {isInstallable && !isInstalled && (
           <div className="mb-8">
             <button
               onClick={installApp}
               className="inline-flex items-center space-x-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              title="Install this app for faster access and offline use"
             >
               <Download className="w-6 h-6" />
               <span>{t('hero.installApp')}</span>

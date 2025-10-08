@@ -3,156 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA Test - Taliyo</title>
+    <title>PWA Native Install Test - Taliyo</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
+            font-family: 'Inter', Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
             padding: 20px;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         .status {
-            background: white;
+            background: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
-            margin: 10px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 15px 0;
+            border-left: 4px solid #6c757d;
         }
-        .success { border-left: 4px solid #10b981; }
-        .error { border-left: 4px solid #ef4444; }
-        .warning { border-left: 4px solid #f59e0b; }
+        .success { border-left-color: #28a745; background: #d4edda; }
+        .error { border-left-color: #dc3545; background: #f8d7da; }
+        .warning { border-left-color: #ffc107; background: #fff3cd; }
+        .info { border-left-color: #17a2b8; background: #d1ecf1; }
+        
         button {
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 15px 25px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 16px;
-            margin: 10px 5px;
+            font-weight: 600;
+            margin: 10px 10px 10px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         }
-        button:hover { background: #1e40af; }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .install-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            font-size: 18px;
+            padding: 18px 30px;
+        }
+        .install-btn:hover {
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
         pre {
-            background: #1f2937;
-            color: #10b981;
-            padding: 15px;
-            border-radius: 8px;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
             overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
         }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 5px;
+        }
+        .badge-success { background: #28a745; color: white; }
+        .badge-warning { background: #ffc107; color: #212529; }
+        .badge-error { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
-    <h1>🔍 PWA Installation Test</h1>
-    
-    <div id="status"></div>
-    
-    <button onclick="testInstall()">Test Install Prompt</button>
-    <button onclick="checkStatus()">Refresh Status</button>
-    
-    <h2>Console Logs:</h2>
-    <pre id="logs"></pre>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 PWA Native Install Test</h1>
+            <p>Test the native "Install App" prompt functionality</p>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <button id="installBtn" onclick="testInstall()" class="install-btn" disabled>
+                📱 Trigger Native Install Prompt
+            </button>
+            <br>
+            <button onclick="checkStatus()">🔄 Refresh Status</button>
+            <button onclick="clearLogs()">🗑️ Clear Logs</button>
+        </div>
+        
+        <h3>📋 Real-time Console Logs:</h3>
+        <pre id="logs"></pre>
+    </div>
 
     <script>
         let deferredPrompt = null;
         let logs = [];
+        let isInstalled = false;
 
         function addLog(message, type = 'info') {
             const timestamp = new Date().toLocaleTimeString();
-            logs.push(`[${timestamp}] ${message}`);
+            const logEntry = `[${timestamp}] ${message}`;
+            logs.push(logEntry);
+            
+            // Keep only last 50 logs
+            if (logs.length > 50) logs.shift();
+            
             document.getElementById('logs').textContent = logs.join('\n');
             console.log(message);
-        }
-
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => {
-                    addLog('✅ Service Worker registered successfully');
-                    checkStatus();
-                })
-                .catch(err => {
-                    addLog('❌ Service Worker registration failed: ' + err);
-                });
-        } else {
-            addLog('❌ Service Worker not supported');
-        }
-
-        // Listen for beforeinstallprompt
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            addLog('✅ beforeinstallprompt event captured!');
-            checkStatus();
-        });
-
-        // Listen for appinstalled
-        window.addEventListener('appinstalled', () => {
-            addLog('✅ App installed successfully!');
-            deferredPrompt = null;
-            checkStatus();
-        });
-
-        async function testInstall() {
-            addLog('🔵 Install button clicked');
             
-            if (deferredPrompt) {
-                try {
-                    await deferredPrompt.prompt();
-                    addLog('✅ Install prompt shown');
-                    
-                    const { outcome } = await deferredPrompt.userChoice;
-                    addLog(`🔵 User choice: ${outcome}`);
-                    
-                    if (outcome === 'accepted') {
-                        addLog('✅ User accepted installation');
-                    } else {
-                        addLog('❌ User dismissed installation');
-                    }
-                    
-                    deferredPrompt = null;
-                } catch (error) {
-                    addLog('❌ Error: ' + error.message);
-                }
+            // Auto-scroll to bottom
+            const logsElement = document.getElementById('logs');
+            logsElement.scrollTop = logsElement.scrollHeight;
+        }
+
+        function clearLogs() {
+            logs = [];
+            document.getElementById('logs').textContent = '';
+        }
+
+        // 1. Register Service Worker
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        addLog('[SW] ✅ Service Worker registered: ' + registration.scope);
+                        checkStatus();
+                    })
+                    .catch(error => {
+                        addLog('[SW] ❌ Registration failed: ' + error.message);
+                        checkStatus();
+                    });
             } else {
-                addLog('⚠️ Install prompt not available');
-                alert('Install prompt not available. Check the status above.');
+                addLog('[SW] ❌ Service Worker not supported in this browser');
             }
         }
 
+        // 2. Listen for beforeinstallprompt (the key event!)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            addLog('[PWA] 🎯 beforeinstallprompt event fired - PWA is installable!');
+            
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            
+            // Store the event so it can be triggered later
+            deferredPrompt = e;
+            
+            // Enable the install button
+            const installBtn = document.getElementById('installBtn');
+            installBtn.disabled = false;
+            installBtn.textContent = '📱 Install App Now (Native Prompt Ready!)';
+            
+            addLog('[PWA] ✅ Native install prompt is ready!');
+            checkStatus();
+        });
+
+        // 3. Listen for appinstalled event
+        window.addEventListener('appinstalled', () => {
+            addLog('[PWA] 🎉 App installed successfully!');
+            isInstalled = true;
+            deferredPrompt = null;
+            
+            const installBtn = document.getElementById('installBtn');
+            installBtn.disabled = true;
+            installBtn.textContent = '✅ App Already Installed';
+            
+            checkStatus();
+        });
+
+        // 4. Function to trigger native install prompt
+        async function testInstall() {
+            addLog('[PWA] 🚀 Install button clicked');
+            
+            if (!deferredPrompt) {
+                addLog('[PWA] ⚠️ No install prompt available - beforeinstallprompt not fired yet');
+                return;
+            }
+
+            try {
+                // Show the native install prompt
+                addLog('[PWA] 📱 Showing native install prompt...');
+                await deferredPrompt.prompt();
+                
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                addLog(`[PWA] 👤 User response: ${outcome}`);
+                
+                if (outcome === 'accepted') {
+                    addLog('[PWA] ✅ User accepted the install prompt');
+                } else {
+                    addLog('[PWA] ❌ User dismissed the install prompt');
+                }
+                
+                // Clear the deferredPrompt
+                deferredPrompt = null;
+                document.getElementById('installBtn').disabled = true;
+                
+            } catch (error) {
+                addLog('[PWA] ❌ Error showing install prompt: ' + error.message);
+            }
+        }
+
+        // 5. Check PWA status
         function checkStatus() {
             const statusDiv = document.getElementById('status');
             let html = '';
 
             // Check if installed
-            const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            const isIOSStandalone = window.navigator.standalone === true;
+            isInstalled = isStandalone || isIOSStandalone;
+            
             html += `<div class="status ${isInstalled ? 'success' : 'warning'}">
-                <strong>Installation Status:</strong> ${isInstalled ? '✅ Installed' : '⚠️ Not Installed'}
+                <strong>📱 Installation Status:</strong> 
+                ${isInstalled ? '<span class="badge badge-success">✅ INSTALLED</span>' : '<span class="badge badge-warning">⚠️ NOT INSTALLED</span>'}
+                ${isInstalled ? '<br><small>App is running in standalone mode</small>' : ''}
             </div>`;
 
             // Check Service Worker
             const swSupported = 'serviceWorker' in navigator;
             html += `<div class="status ${swSupported ? 'success' : 'error'}">
-                <strong>Service Worker:</strong> ${swSupported ? '✅ Supported' : '❌ Not Supported'}
+                <strong>⚙️ Service Worker:</strong> 
+                ${swSupported ? '<span class="badge badge-success">✅ SUPPORTED</span>' : '<span class="badge badge-error">❌ NOT SUPPORTED</span>'}
             </div>`;
 
-            // Check Install Prompt
-            html += `<div class="status ${deferredPrompt ? 'success' : 'warning'}">
-                <strong>Install Prompt:</strong> ${deferredPrompt ? '✅ Ready' : '⚠️ Not Available'}
-                ${!deferredPrompt && !isInstalled ? '<br><small>Wait a few seconds or refresh the page</small>' : ''}
+            // Check Install Prompt Availability
+            html += `<div class="status ${deferredPrompt ? 'success' : 'info'}">
+                <strong>🎯 Native Install Prompt:</strong> 
+                ${deferredPrompt ? '<span class="badge badge-success">✅ READY</span>' : '<span class="badge badge-warning">⏳ WAITING</span>'}
+                <br><small>${deferredPrompt ? 'beforeinstallprompt event captured - ready to show native prompt!' : 'Waiting for beforeinstallprompt event to fire...'}</small>
             </div>`;
 
-            // Check HTTPS
+            // Check HTTPS/Secure Context
             const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
             html += `<div class="status ${isSecure ? 'success' : 'error'}">
-                <strong>Secure Context:</strong> ${isSecure ? '✅ Yes' : '❌ No (HTTPS required)'}
+                <strong>🔒 Secure Context:</strong> 
+                ${isSecure ? '<span class="badge badge-success">✅ HTTPS/LOCALHOST</span>' : '<span class="badge badge-error">❌ REQUIRES HTTPS</span>'}
+                <br><small>PWAs require HTTPS in production</small>
+            </div>`;
+
+            // Check Manifest
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            html += `<div class="status ${manifestLink ? 'success' : 'error'}">
+                <strong>📋 Web App Manifest:</strong> 
+                ${manifestLink ? '<span class="badge badge-success">✅ LINKED</span>' : '<span class="badge badge-error">❌ MISSING</span>'}
             </div>`;
 
             statusDiv.innerHTML = html;
         }
 
-        // Initial check
-        setTimeout(checkStatus, 1000);
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            addLog('[INIT] 🚀 PWA Test page loaded');
+            registerServiceWorker();
+            checkStatus();
+            
+            // Check for install prompt every few seconds
+            setInterval(() => {
+                if (!deferredPrompt && !isInstalled) {
+                    addLog('[PWA] ⏳ Still waiting for beforeinstallprompt event...');
+                }
+            }, 10000);
+        });
+
+        // Initial status check
+        setTimeout(checkStatus, 500);
     </script>
 </body>
 </html>

@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 const Header = () => {
   const { language, setLanguage, t } = useLanguage();
-  const { isInstalled, installApp } = usePWA();
+  const { isInstallable, isInstalled, installApp } = usePWA();
   // Check if user is admin (from session storage)
   const [isAdmin, setIsAdmin] = useState(false);
   
@@ -65,11 +65,12 @@ const Header = () => {
               </a>
             )}
             
-            {/* Install App Button - Always show for PWA */}
-            {!isInstalled && (
+            {/* Install App Button - Only show when native prompt is available */}
+            {isInstallable && !isInstalled && (
               <button
                 onClick={installApp}
                 className="flex items-center space-x-1 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
+                title="Install this app on your device"
               >
                 <Download className="w-4 h-4" />
                 <span className="text-sm font-medium">

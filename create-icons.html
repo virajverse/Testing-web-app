@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Taliyo Icons</title>
+</head>
+<body>
+    <h2>Taliyo Icon Creator</h2>
+    <p>Click the button to generate and download icons:</p>
+    
+    <canvas id="canvas180" width="180" height="180" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+    <canvas id="canvas192" width="192" height="192" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+    <canvas id="canvas512" width="512" height="512" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+    
+    <br><br>
+    <button onclick="generateIcons()" style="padding: 10px 20px; font-size: 16px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Generate & Download Icons
+    </button>
+
+    <script>
+        function createIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#2563eb');
+            gradient.addColorStop(1, '#1e40af');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add rounded corners
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, size * 0.15);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // Text "T"
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${size * 0.4}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('T', size / 2, size / 2);
+            
+            // Add shadow effect
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = size * 0.02;
+            ctx.shadowOffsetX = size * 0.01;
+            ctx.shadowOffsetY = size * 0.01;
+        }
+
+        function generateIcons() {
+            // Create icons
+            createIcon(document.getElementById('canvas180'), 180);
+            createIcon(document.getElementById('canvas192'), 192);
+            createIcon(document.getElementById('canvas512'), 512);
+            
+            // Download function
+            function downloadCanvas(canvas, filename) {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+            
+            // Download all icons with delays
+            setTimeout(() => {
+                downloadCanvas(document.getElementById('canvas180'), 'apple-touch-icon.png');
+            }, 100);
+            
+            setTimeout(() => {
+                downloadCanvas(document.getElementById('canvas192'), 'icon-192.png');
+            }, 500);
+            
+            setTimeout(() => {
+                downloadCanvas(document.getElementById('canvas512'), 'icon-512.png');
+            }, 1000);
+            
+            setTimeout(() => {
+                downloadCanvas(document.getElementById('canvas512'), 'og.png');
+            }, 1500);
+            
+            setTimeout(() => {
+                // Create favicon (convert to ICO format is complex, so we'll use PNG)
+                downloadCanvas(document.getElementById('canvas180'), 'favicon.png');
+                alert('Icons downloaded! Replace the files in public/ folder and rename favicon.png to favicon.ico');
+            }, 2000);
+        }
+
+        // Auto-generate on load
+        window.onload = function() {
+            createIcon(document.getElementById('canvas180'), 180);
+            createIcon(document.getElementById('canvas192'), 192);
+            createIcon(document.getElementById('canvas512'), 512);
+        };
+    </script>
+</body>
+</html>
