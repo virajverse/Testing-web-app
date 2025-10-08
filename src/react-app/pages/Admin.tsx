@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Package, 
@@ -8,6 +8,7 @@ import {
   Users,
   Shield
 } from 'lucide-react';
+import { isAdminAuthenticated, authenticateAdmin, logoutAdmin } from '@/lib/auth';
 
 import AdminDashboard from '../components/admin/AdminDashboard';
 import ServiceManagement from '../components/admin/ServiceManagement';
@@ -17,15 +18,28 @@ import OrderManagement from '../components/admin/OrderManagement';
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [adminKey, setAdminKey] = useState('');
+  const [error, setError] = useState('');
 
-  // Simple admin authentication (replace with Supabase auth later)
+  // Admin authentication with secret key
   const handleLogin = () => {
-    setIsAuthenticated(true);
+    if (authenticateAdmin(adminKey)) {
+      setIsAuthenticated(true);
+      setError('');
+    } else {
+      setError('Invalid admin key. Please try again.');
+    }
   };
 
   const handleLogout = () => {
+    logoutAdmin();
     setIsAuthenticated(false);
   };
+
+  // Check if already authenticated on component mount
+  useEffect(() => {
+    setIsAuthenticated(isAdminAuthenticated());
+  }, []);
 
   if (!isAuthenticated) {
     return (
@@ -35,20 +49,42 @@ export default function Admin() {
             Admin Panel
           </h1>
           <p className="text-gray-600 text-center mb-6">
-            Please login to access the admin panel
+            Enter admin key to access the panel
           </p>
           
-          {/* Simple Login for Testing */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="adminKey" className="block text-sm font-medium text-gray-700 mb-2">
+                Admin Secret Key
+              </label>
+              <input
+                type="password"
+                id="adminKey"
+                value={adminKey}
+                onChange={(e) => setAdminKey(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter admin key..."
+              />
+            </div>
+            
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+            
             <button
               onClick={handleLogin}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+              disabled={!adminKey.trim()}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
             >
               <Shield className="w-5 h-5" />
               <span className="font-medium">Login as Admin</span>
             </button>
-            <p className="text-xs text-gray-600 text-center mt-2">
-              Temporary login - implement Supabase auth later
+            
+            <p className="text-xs text-gray-500 text-center">
+              Admin key is configured in environment variables
             </p>
           </div>
         </div>

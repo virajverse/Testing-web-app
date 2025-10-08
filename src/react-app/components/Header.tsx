@@ -6,7 +6,22 @@ import { useState } from 'react';
 const Header = () => {
   const { language, setLanguage, t } = useLanguage();
   const { isInstalled, installApp } = usePWA();
-  const [isAdmin] = useState(false); // TODO: Implement Supabase auth
+  // Check if user is admin (from session storage)
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useState(() => {
+    const checkAdminStatus = () => {
+      const isAuth = sessionStorage.getItem('admin_authenticated');
+      setIsAdmin(isAuth === 'true');
+    };
+    
+    checkAdminStatus();
+    
+    // Listen for storage changes (when admin logs in/out)
+    window.addEventListener('storage', checkAdminStatus);
+    
+    return () => window.removeEventListener('storage', checkAdminStatus);
+  });
   
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919876543210';
 

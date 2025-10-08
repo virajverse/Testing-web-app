@@ -33,6 +33,12 @@ Update `.env.local` file:
 ```env
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_key_here
+
+# Admin Configuration
+VITE_ADMIN_SECRET_KEY=your_secure_admin_key
+VITE_ADMIN_EMAILS=admin@yourdomain.com,owner@yourdomain.com
+
+# WhatsApp Configuration
 VITE_WHATSAPP_NUMBER=919876543210
 ```
 
@@ -222,6 +228,8 @@ Add these in your hosting platform:
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_ADMIN_SECRET_KEY=your_secure_admin_key
+VITE_ADMIN_EMAILS=admin@yourdomain.com,owner@yourdomain.com
 VITE_WHATSAPP_NUMBER=919876543210
 VITE_APP_NAME=Taliyo Marketplace
 VITE_APP_URL=https://yourdomain.com
