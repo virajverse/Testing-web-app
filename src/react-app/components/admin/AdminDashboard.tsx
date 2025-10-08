@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Package, FolderOpen, ClipboardList, TrendingUp, Clock } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface DashboardStats {
   services: number;
@@ -31,11 +32,39 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch('/api/admin/dashboard');
-      if (response.ok) {
-        const dashboardData = await response.json();
-        setData(dashboardData);
-      }
+      // Fetch services count
+      const { count: servicesCount } = await supabase
+        .from('services')
+        .select('*', { count: 'exact', head: true });
+
+      // Fetch categories count  
+      const { count: categoriesCount } = await supabase
+        .from('categories')
+        .select('*', { count: 'exact', head: true });
+
+      // Fetch orders count
+      const { count: ordersCount } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true });
+
+      // Fetch recent orders
+      const { data: recentOrders } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          services (name_en)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      setData({
+        stats: {
+          services: servicesCount || 0,
+          categories: categoriesCount || 0,
+          orders: ordersCount || 0
+        },
+        recentOrders: recentOrders || []
+      });
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
     } finally {

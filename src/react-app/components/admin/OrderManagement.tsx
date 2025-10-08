@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Phone } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface Order {
   id: number;
@@ -49,11 +50,16 @@ const OrderManagement = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('/api/admin/orders');
-      if (response.ok) {
-        const data = await response.json();
-        setOrders(data);
-      }
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          services (name_en, price)
+        `)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setOrders(data || []);
     } catch (error) {
       console.error('Failed to fetch orders:', error);
     } finally {
@@ -63,11 +69,14 @@ const OrderManagement = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await fetch('/api/admin/services');
-      if (response.ok) {
-        const data = await response.json();
-        setServices(data.filter((service: Service) => service.is_active));
-      }
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('is_active', true)
+        .order('name_en');
+      
+      if (error) throw error;
+      setServices(data || []);
     } catch (error) {
       console.error('Failed to fetch services:', error);
     }
