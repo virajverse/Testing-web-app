@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api|_next|_static|favicon.ico|sw.js|manifest.json|icon-.*\\.png|apple-touch-icon.png|og.png|browserconfig.xml).*)",
+      "source": "/((?!api|_next|_static|favicon|sw\\.js|manifest\\.json|icon-.*|apple-touch-icon|og\\.|browserconfig\\.xml).*)",
       "destination": "/index.html"
     }
   ],
@@ -24,7 +24,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|mjs|jsx|ts|tsx))",
+      "source": "/(.*)\\.js",
       "headers": [
         {
           "key": "Content-Type",
@@ -33,7 +33,16 @@
       ]
     },
     {
-      "source": "/(.*\\.png)",
+      "source": "/(.*)\\.svg",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.png",
       "headers": [
         {
           "key": "Content-Type",
