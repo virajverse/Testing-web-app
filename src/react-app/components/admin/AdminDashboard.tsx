@@ -10,11 +10,13 @@ interface DashboardStats {
 
 interface RecentOrder {
   id: number;
-  client_name: string;
-  whatsapp: string;
+  order_id: string;
+  customer_name: string;
+  customer_phone: string;
   service_name: string;
   status: string;
   created_at: string;
+  budget_range?: string;
 }
 
 interface DashboardData {
@@ -42,18 +44,15 @@ const AdminDashboard = () => {
         .from('categories')
         .select('*', { count: 'exact', head: true });
 
-      // Fetch orders count
+      // Fetch orders count from enhanced_orders
       const { count: ordersCount } = await supabase
-        .from('orders')
+        .from('enhanced_orders')
         .select('*', { count: 'exact', head: true });
 
-      // Fetch recent orders
+      // Fetch recent orders from enhanced_orders
       const { data: recentOrders } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          services (name_en)
-        `)
+        .from('enhanced_orders')
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -113,12 +112,16 @@ const AdminDashboard = () => {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'contacted':
+      case 'received':
         return 'bg-blue-100 text-blue-800';
-      case 'in progress':
+      case 'contacted':
+        return 'bg-purple-100 text-purple-800';
+      case 'in_progress':
         return 'bg-yellow-100 text-yellow-800';
-      case 'delivered':
+      case 'completed':
         return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -163,13 +166,16 @@ const AdminDashboard = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Client
+                    Order ID
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Customer
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Service
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    WhatsApp
+                    Budget
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
@@ -183,13 +189,17 @@ const AdminDashboard = () => {
                 {data.recentOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{order.client_name}</div>
+                      <div className="text-sm font-bold text-blue-600">{order.order_id}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{order.customer_name}</div>
+                      <div className="text-sm text-gray-500">{order.customer_phone}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{order.service_name}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{order.whatsapp}</div>
+                      <div className="text-sm text-gray-500">{order.budget_range || 'Not specified'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
