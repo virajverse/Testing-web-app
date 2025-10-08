@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useServices, Service } from '../hooks/useServices';
 import ServiceCard from './ServiceCard';
 import ServiceModal from './ServiceModal';
+import OrderForm from './OrderForm';
 
 interface ServiceGridProps {
   selectedCategory: string;
@@ -10,6 +11,8 @@ interface ServiceGridProps {
 const ServiceGrid = ({ selectedCategory }: ServiceGridProps) => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
+  const [orderService, setOrderService] = useState<Service | null>(null);
   const { services, loading } = useServices();
 
   const filteredServices = selectedCategory === 'all' 
@@ -24,6 +27,16 @@ const ServiceGrid = ({ selectedCategory }: ServiceGridProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedService(null);
+  };
+
+  const handleOrderClick = (service: Service) => {
+    setOrderService(service);
+    setIsOrderFormOpen(true);
+  };
+
+  const handleCloseOrderForm = () => {
+    setIsOrderFormOpen(false);
+    setOrderService(null);
   };
 
   if (loading) {
@@ -48,6 +61,7 @@ const ServiceGrid = ({ selectedCategory }: ServiceGridProps) => {
                 key={service.id}
                 service={service}
                 onServiceClick={handleServiceClick}
+                onOrderClick={handleOrderClick}
               />
             ))}
           </div>
@@ -64,6 +78,18 @@ const ServiceGrid = ({ selectedCategory }: ServiceGridProps) => {
         service={selectedService}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+      />
+
+      <OrderForm
+        isOpen={isOrderFormOpen}
+        onClose={handleCloseOrderForm}
+        selectedService={orderService ? {
+          id: parseInt(orderService.id),
+          name_en: orderService.name,
+          name_hi: orderService.nameHi,
+          price: orderService.price,
+          delivery_time: orderService.deliveryDays
+        } : undefined}
       />
     </>
   );
