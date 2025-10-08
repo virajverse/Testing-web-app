@@ -1,14 +1,14 @@
 import { MessageCircle, Globe, Download, Settings } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePWA } from '../hooks/usePWA';
-import { useAuth } from '@getmocha/users-service/react';
+import { useState } from 'react';
 
 const Header = () => {
   const { language, setLanguage, t } = useLanguage();
   const { isInstalled, installApp } = usePWA();
-  const { user, redirectToLogin } = useAuth();
+  const [isAdmin] = useState(false); // TODO: Implement Supabase auth
   
-  const whatsappNumber = '919876543210'; // Replace with actual number
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919876543210';
 
   const handleWhatsAppClick = () => {
     const message = language === 'en' 
@@ -40,7 +40,7 @@ const Header = () => {
           {/* Right side buttons */}
           <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Admin Access */}
-            {user ? (
+            {isAdmin && (
               <a
                 href="/admin"
                 className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
@@ -48,15 +48,8 @@ const Header = () => {
                 <Settings className="w-4 h-4" />
                 <span className="text-sm font-medium hidden sm:inline">Admin</span>
               </a>
-            ) : (
-              <button
-                onClick={redirectToLogin}
-                className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-              >
-                <Settings className="w-4 h-4" />
-                <span className="text-sm font-medium hidden sm:inline">Admin</span>
-              </button>
             )}
+            
             {/* Install App Button - Always show for PWA */}
             {!isInstalled && (
               <button
