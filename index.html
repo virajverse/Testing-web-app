@@ -35,8 +35,56 @@
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <!-- Loading screen while JavaScript loads -->
+    <div id="initial-loading" style="
+      min-height: 100vh; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      background-color: #f9fafb; 
+      font-family: 'Inter', system-ui, sans-serif;
+    ">
+      <div style="text-align: center;">
+        <div style="
+          width: 40px; 
+          height: 40px; 
+          border: 3px solid #e5e7eb; 
+          border-top: 3px solid #2563eb; 
+          border-radius: 50%; 
+          animation: spin 1s linear infinite; 
+          margin: 0 auto 16px;
+        "></div>
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+          Taliyo Technologies
+        </h2>
+        <p style="color: #6b7280; font-size: 14px;">
+          Loading digital services...
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  
   <script type="module" src="/src/react-app/main.tsx"></script>
+  
+  <!-- Remove loading screen once React loads -->
+  <script>
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        const loading = document.getElementById('initial-loading');
+        if (loading && document.querySelector('[data-reactroot], .react-app')) {
+          loading.remove();
+        }
+      }, 100);
+    });
+  </script>
 </body>
 
 </html>
