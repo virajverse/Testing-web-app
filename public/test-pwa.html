@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Test - Taliyo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .status {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { border-left: 4px solid #10b981; }
+        .error { border-left: 4px solid #ef4444; }
+        .warning { border-left: 4px solid #f59e0b; }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #1e40af; }
+        pre {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 PWA Installation Test</h1>
+    
+    <div id="status"></div>
+    
+    <button onclick="testInstall()">Test Install Prompt</button>
+    <button onclick="checkStatus()">Refresh Status</button>
+    
+    <h2>Console Logs:</h2>
+    <pre id="logs"></pre>
+
+    <script>
+        let deferredPrompt = null;
+        let logs = [];
+
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push(`[${timestamp}] ${message}`);
+            document.getElementById('logs').textContent = logs.join('\n');
+            console.log(message);
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => {
+                    addLog('✅ Service Worker registered successfully');
+                    checkStatus();
+                })
+                .catch(err => {
+                    addLog('❌ Service Worker registration failed: ' + err);
+                });
+        } else {
+            addLog('❌ Service Worker not supported');
+        }
+
+        // Listen for beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            addLog('✅ beforeinstallprompt event captured!');
+            checkStatus();
+        });
+
+        // Listen for appinstalled
+        window.addEventListener('appinstalled', () => {
+            addLog('✅ App installed successfully!');
+            deferredPrompt = null;
+            checkStatus();
+        });
+
+        async function testInstall() {
+            addLog('🔵 Install button clicked');
+            
+            if (deferredPrompt) {
+                try {
+                    await deferredPrompt.prompt();
+                    addLog('✅ Install prompt shown');
+                    
+                    const { outcome } = await deferredPrompt.userChoice;
+                    addLog(`🔵 User choice: ${outcome}`);
+                    
+                    if (outcome === 'accepted') {
+                        addLog('✅ User accepted installation');
+                    } else {
+                        addLog('❌ User dismissed installation');
+                    }
+                    
+                    deferredPrompt = null;
+                } catch (error) {
+                    addLog('❌ Error: ' + error.message);
+                }
+            } else {
+                addLog('⚠️ Install prompt not available');
+                alert('Install prompt not available. Check the status above.');
+            }
+        }
+
+        function checkStatus() {
+            const statusDiv = document.getElementById('status');
+            let html = '';
+
+            // Check if installed
+            const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
+            html += `<div class="status ${isInstalled ? 'success' : 'warning'}">
+                <strong>Installation Status:</strong> ${isInstalled ? '✅ Installed' : '⚠️ Not Installed'}
+            </div>`;
+
+            // Check Service Worker
+            const swSupported = 'serviceWorker' in navigator;
+            html += `<div class="status ${swSupported ? 'success' : 'error'}">
+                <strong>Service Worker:</strong> ${swSupported ? '✅ Supported' : '❌ Not Supported'}
+            </div>`;
+
+            // Check Install Prompt
+            html += `<div class="status ${deferredPrompt ? 'success' : 'warning'}">
+                <strong>Install Prompt:</strong> ${deferredPrompt ? '✅ Ready' : '⚠️ Not Available'}
+                ${!deferredPrompt && !isInstalled ? '<br><small>Wait a few seconds or refresh the page</small>' : ''}
+            </div>`;
+
+            // Check HTTPS
+            const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
+            html += `<div class="status ${isSecure ? 'success' : 'error'}">
+                <strong>Secure Context:</strong> ${isSecure ? '✅ Yes' : '❌ No (HTTPS required)'}
+            </div>`;
+
+            statusDiv.innerHTML = html;
+        }
+
+        // Initial check
+        setTimeout(checkStatus, 1000);
+    </script>
+</body>
+</html>
