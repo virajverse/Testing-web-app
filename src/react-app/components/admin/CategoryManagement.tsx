@@ -5,7 +5,6 @@ import { supabase } from '@/lib/supabase';
 interface Category {
   id: number;
   name_en: string;
-  name_hi: string;
   slug: string;
   created_at: string;
 }
@@ -17,7 +16,6 @@ const CategoryManagement = () => {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState({
     name_en: '',
-    name_hi: '',
     slug: ''
   });
 
@@ -76,7 +74,6 @@ const CategoryManagement = () => {
     setEditingCategory(category);
     setFormData({
       name_en: category.name_en,
-      name_hi: category.name_hi,
       slug: category.slug
     });
     setShowModal(true);
@@ -106,7 +103,6 @@ const CategoryManagement = () => {
     setEditingCategory(null);
     setFormData({
       name_en: '',
-      name_hi: '',
       slug: ''
     });
   };
@@ -169,7 +165,6 @@ const CategoryManagement = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">{category.name_en}</div>
-                      <div className="text-sm text-gray-500">{category.name_hi}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -224,19 +219,6 @@ const CategoryManagement = () => {
                   type="text"
                   value={formData.name_en}
                   onChange={(e) => handleNameEnChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category Name (Hindi)
-                </label>
-                <input
-                  type="text"
-                  value={formData.name_hi}
-                  onChange={(e) => setFormData({ ...formData, name_hi: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />

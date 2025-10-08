@@ -5,15 +5,11 @@ import { supabase } from '@/lib/supabase';
 interface Service {
   id: number;
   name_en: string;
-  name_hi: string;
   price: number;
   delivery_time: number;
   short_desc_en?: string;
-  short_desc_hi?: string;
   full_desc_en?: string;
-  full_desc_hi?: string;
   features_en?: string;
-  features_hi?: string;
   image_url?: string;
   category_id: number;
   category_name: string;
@@ -24,7 +20,6 @@ interface Service {
 interface Category {
   id: number;
   name_en: string;
-  name_hi: string;
   slug: string;
 }
 
@@ -36,15 +31,11 @@ const ServiceManagement = () => {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [formData, setFormData] = useState({
     name_en: '',
-    name_hi: '',
     price: '',
     delivery_time: '',
     short_desc_en: '',
-    short_desc_hi: '',
     full_desc_en: '',
-    full_desc_hi: '',
     features_en: '',
-    features_hi: '',
     image_url: '',
     category_id: '',
     is_active: true
@@ -123,15 +114,11 @@ const ServiceManagement = () => {
     setEditingService(service);
     setFormData({
       name_en: service.name_en,
-      name_hi: service.name_hi,
       price: service.price.toString(),
       delivery_time: service.delivery_time.toString(),
       short_desc_en: service.short_desc_en || '',
-      short_desc_hi: service.short_desc_hi || '',
       full_desc_en: service.full_desc_en || '',
-      full_desc_hi: service.full_desc_hi || '',
       features_en: service.features_en || '',
-      features_hi: service.features_hi || '',
       image_url: service.image_url || '',
       category_id: service.category_id.toString(),
       is_active: service.is_active
@@ -160,15 +147,11 @@ const ServiceManagement = () => {
     setEditingService(null);
     setFormData({
       name_en: '',
-      name_hi: '',
       price: '',
       delivery_time: '',
       short_desc_en: '',
-      short_desc_hi: '',
       full_desc_en: '',
-      full_desc_hi: '',
       features_en: '',
-      features_hi: '',
       image_url: '',
       category_id: '',
       is_active: true
@@ -230,7 +213,6 @@ const ServiceManagement = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">{service.name_en}</div>
-                      <div className="text-sm text-gray-500">{service.name_hi}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -295,31 +277,17 @@ const ServiceManagement = () => {
             </div>
             
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name (English)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name_en}
-                    onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name (Hindi)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name_hi}
-                    onChange={(e) => setFormData({ ...formData, name_hi: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Service Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.name_en}
+                  onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
@@ -379,29 +347,16 @@ const ServiceManagement = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Short Description (English)
-                  </label>
-                  <textarea
-                    value={formData.short_desc_en}
-                    onChange={(e) => setFormData({ ...formData, short_desc_en: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Short Description (Hindi)
-                  </label>
-                  <textarea
-                    value={formData.short_desc_hi}
-                    onChange={(e) => setFormData({ ...formData, short_desc_hi: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows={3}
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Short Description
+                </label>
+                <textarea
+                  value={formData.short_desc_en}
+                  onChange={(e) => setFormData({ ...formData, short_desc_en: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={3}
+                />
               </div>
 
               <div className="flex items-center">
