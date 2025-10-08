@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api|_next|_static|favicon.ico|sw.js|manifest.json|icon-.*\\.png|apple-touch-icon.png|og.png|browserconfig.xml).*)",
       "destination": "/index.html"
     }
   ],
@@ -16,6 +16,28 @@
         {
           "key": "Service-Worker-Allowed",
           "value": "/"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(js|mjs|jsx|ts|tsx))",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.png)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/png"
         }
       ]
     }

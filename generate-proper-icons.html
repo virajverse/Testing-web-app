@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Taliyo Icons - Proper PNG Format</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        canvas { border: 2px solid #ddd; margin: 10px; border-radius: 8px; }
+        button { background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px; }
+        button:hover { background: #1e40af; }
+        .preview { display: flex; flex-wrap: wrap; gap: 20px; margin: 20px 0; }
+        .icon-info { text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Taliyo Icon Generator</h1>
+        <p>Generate proper PNG icons for your PWA</p>
+        
+        <div class="preview">
+            <div class="icon-info">
+                <canvas id="canvas192" width="192" height="192"></canvas>
+                <p>192x192 Icon</p>
+            </div>
+            <div class="icon-info">
+                <canvas id="canvas512" width="512" height="512"></canvas>
+                <p>512x512 Icon</p>
+            </div>
+        </div>
+        
+        <button onclick="generateAndDownload()">🚀 Generate & Download All Icons</button>
+        <button onclick="generateIcons()">🎨 Preview Icons</button>
+        
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function createTaliyoIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#2563eb');
+            gradient.addColorStop(1, '#1e40af');
+            
+            // Fill background
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add rounded corners
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.beginPath();
+            const radius = size * 0.1;
+            ctx.roundRect(0, 0, size, size, radius);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // Add letter "T"
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${size * 0.5}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('T', size / 2, size / 2);
+            
+            // Add subtle shadow
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+            ctx.shadowBlur = size * 0.02;
+            ctx.shadowOffsetY = size * 0.01;
+        }
+
+        function generateIcons() {
+            createTaliyoIcon(document.getElementById('canvas192'), 192);
+            createTaliyoIcon(document.getElementById('canvas512'), 512);
+            document.getElementById('status').innerHTML = '<p style="color: green;">✅ Icons generated! Click download to save them.</p>';
+        }
+
+        function downloadCanvasAsPNG(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function generateAndDownload() {
+            // Generate icons first
+            generateIcons();
+            
+            const canvas192 = document.getElementById('canvas192');
+            const canvas512 = document.getElementById('canvas512');
+            
+            // Download with delays to avoid browser blocking
+            setTimeout(() => downloadCanvasAsPNG(canvas192, 'icon-192.png'), 100);
+            setTimeout(() => downloadCanvasAsPNG(canvas512, 'icon-512.png'), 300);
+            setTimeout(() => downloadCanvasAsPNG(canvas192, 'apple-touch-icon.png'), 500);
+            setTimeout(() => downloadCanvasAsPNG(canvas512, 'og.png'), 700);
+            setTimeout(() => downloadCanvasAsPNG(canvas192, 'favicon.png'), 900);
+            
+            setTimeout(() => {
+                document.getElementById('status').innerHTML = `
+                    <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <h3>✅ All icons downloaded!</h3>
+                        <p><strong>Next steps:</strong></p>
+                        <ol>
+                            <li>Move all downloaded PNG files to your <code>public/</code> folder</li>
+                            <li>Rename <code>favicon.png</code> to <code>favicon.ico</code></li>
+                            <li>Deploy your changes</li>
+                        </ol>
+                        <p><em>These are proper PNG files that will work correctly!</em></p>
+                    </div>
+                `;
+            }, 1200);
+        }
+
+        // Auto-generate on page load
+        window.onload = generateIcons;
+    </script>
+</body>
+</html>

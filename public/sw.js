@@ -3,8 +3,8 @@ const CACHE_NAME = 'taliyo-v1';
 const urlsToCache = [
   '/',
   '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
+  '/icon-192.svg',
+  '/icon-512.svg'
 ];
 
 // Install event - cache essential resources
