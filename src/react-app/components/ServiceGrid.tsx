@@ -86,7 +86,6 @@ const ServiceGrid = ({ selectedCategory }: ServiceGridProps) => {
         selectedService={orderService ? {
           id: parseInt(orderService.id),
           name_en: orderService.name,
-          name_hi: orderService.nameHi,
           price: orderService.price,
           delivery_time: orderService.deliveryDays
         } : undefined}

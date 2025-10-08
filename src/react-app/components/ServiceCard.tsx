@@ -9,7 +9,7 @@ interface ServiceCardProps {
 }
 
 const ServiceCard = ({ service, onServiceClick, onOrderClick }: ServiceCardProps) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   
 
 
@@ -18,7 +18,7 @@ const ServiceCard = ({ service, onServiceClick, onOrderClick }: ServiceCardProps
     onOrderClick(service);
   };
 
-  const serviceName = language === 'en' ? service.name : service.nameHi;
+  const serviceName = service.name;
 
   return (
     <div 
@@ -55,7 +55,7 @@ const ServiceCard = ({ service, onServiceClick, onOrderClick }: ServiceCardProps
           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors font-medium"
         >
           <MessageCircle className="w-4 h-4" />
-          <span>{language === 'hi' ? 'ऑर्डर करें' : 'Order Now'}</span>
+          <span>Order Now</span>
         </button>
       </div>
     </div>

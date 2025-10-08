@@ -26,9 +26,7 @@ const Header = () => {
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919876543210';
 
   const handleWhatsAppClick = () => {
-    const message = language === 'en' 
-      ? 'Hi Taliyo, I want to know more about your digital services.'
-      : 'हाय तलियो, मैं आपकी डिजिटल सेवाओं के बारे में और जानना चाहता हूं।';
+    const message = 'Hi Taliyo, I want to know more about your digital services.';
     
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');

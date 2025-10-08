@@ -9,25 +9,23 @@ interface ServiceModalProps {
 }
 
 const ServiceModal = ({ service, isOpen, onClose }: ServiceModalProps) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
 
   if (!isOpen || !service) return null;
 
   const whatsappNumber = '919876543210'; // Replace with actual number
   
   const handleWhatsAppOrder = () => {
-    const serviceName = language === 'en' ? service.name : service.nameHi;
-    const message = language === 'en' 
-      ? `Hi Taliyo, I want to order "${serviceName}" (₹${service.price}). Please confirm.`
-      : `हाय तलियो, मैं "${serviceName}" (₹${service.price}) ऑर्डर करना चाहता हूं। कृपया कन्फर्म करें।`;
+    const serviceName = service.name;
+    const message = `Hi Taliyo, I want to order "${serviceName}" (₹${service.price}). Please confirm.`;
     
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
   };
 
-  const serviceName = language === 'en' ? service.name : service.nameHi;
-  const description = language === 'en' ? service.description : service.descriptionHi;
-  const features = language === 'en' ? service.features : service.featuresHi;
+  const serviceName = service.name;
+  const description = service.description;
+  const features = service.features;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

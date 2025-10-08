@@ -10,7 +10,6 @@ interface OrderFormProps {
   selectedService?: {
     id: number;
     name_en: string;
-    name_hi: string;
     price: number;
     delivery_time: number;
   };
@@ -35,7 +34,7 @@ interface AttachmentFile {
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService }) => {
-  const { language } = useLanguage();
+  const { } = useLanguage();
   const [formData, setFormData] = useState<OrderFormData>({
     customerName: '',
     customerPhone: '',
@@ -54,20 +53,20 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
   const [uploadingFiles, setUploadingFiles] = useState(false);
 
   const budgetOptions = [
-    { value: 'under-5k', label: 'Under ₹5,000', labelHi: '₹5,000 से कम' },
-    { value: '5k-10k', label: '₹5,000 - ₹10,000', labelHi: '₹5,000 - ₹10,000' },
-    { value: '10k-25k', label: '₹10,000 - ₹25,000', labelHi: '₹10,000 - ₹25,000' },
-    { value: '25k-50k', label: '₹25,000 - ₹50,000', labelHi: '₹25,000 - ₹50,000' },
-    { value: 'above-50k', label: 'Above ₹50,000', labelHi: '₹50,000 से अधिक' },
-    { value: 'flexible', label: 'Flexible', labelHi: 'लचीला बजट' }
+    { value: 'under-5k', label: 'Under ₹5,000' },
+    { value: '5k-10k', label: '₹5,000 - ₹10,000' },
+    { value: '10k-25k', label: '₹10,000 - ₹25,000' },
+    { value: '25k-50k', label: '₹25,000 - ₹50,000' },
+    { value: 'above-50k', label: 'Above ₹50,000' },
+    { value: 'flexible', label: 'Flexible' }
   ];
 
   const deliveryOptions = [
-    { value: 'asap', label: 'ASAP', labelHi: 'जल्दी से जल्दी' },
-    { value: '1-week', label: '1 Week', labelHi: '1 सप्ताह' },
-    { value: '2-weeks', label: '2 Weeks', labelHi: '2 सप्ताह' },
-    { value: '1-month', label: '1 Month', labelHi: '1 महीना' },
-    { value: 'flexible', label: 'Flexible', labelHi: 'लचीला समय' }
+    { value: 'asap', label: 'ASAP' },
+    { value: '1-week', label: '1 Week' },
+    { value: '2-weeks', label: '2 Weeks' },
+    { value: '1-month', label: '1 Month' },
+    { value: 'flexible', label: 'Flexible' }
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -134,7 +133,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
           customer_email: formData.customerEmail || null,
           customer_whatsapp: whatsappNumber,
           service_id: selectedService?.id,
-          service_name: language === 'hi' ? selectedService?.name_hi : selectedService?.name_en,
+          service_name: selectedService?.name_en,
           service_price: selectedService?.price,
           requirements: formData.requirements,
           budget_range: formData.budgetRange || null,
@@ -201,11 +200,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
-              {language === 'hi' ? 'ऑर्डर करें' : 'Place Order'}
+              Place Order
             </h2>
             {selectedService && (
               <p className="text-sm text-gray-600 mt-1">
-                {language === 'hi' ? selectedService.name_hi : selectedService.name_en} - ₹{selectedService.price.toLocaleString()}
+                {selectedService.name_en} - ₹{selectedService.price.toLocaleString()}
               </p>
             )}
           </div>
@@ -226,13 +225,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
               </div>
               <div>
                 <h3 className="font-semibold">
-                  {language === 'hi' ? 'ऑर्डर सफलतापूर्वक सबमिट हुआ!' : 'Order Submitted Successfully!'}
+                  Order Submitted Successfully!
                 </h3>
                 <p className="text-sm">
-                  {language === 'hi' 
-                    ? `आपका ऑर्डर ID: ${orderId}. हम 24 घंटे में संपर्क करेंगे।`
-                    : `Your Order ID: ${orderId}. We'll contact you within 24 hours.`
-                  }
+                  Your Order ID: {orderId}. We'll contact you within 24 hours.
                 </p>
               </div>
             </div>
@@ -244,13 +240,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
           <div className="m-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="text-red-800">
               <h3 className="font-semibold">
-                {language === 'hi' ? 'कुछ गलत हुआ' : 'Something went wrong'}
+                Something went wrong
               </h3>
               <p className="text-sm">
-                {language === 'hi' 
-                  ? 'कृपया फिर से कोशिश करें या हमसे संपर्क करें।'
-                  : 'Please try again or contact us directly.'
-                }
+                Please try again or contact us directly.
               </p>
             </div>
           </div>
@@ -262,13 +255,13 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
               <User className="w-5 h-5" />
-              <span>{language === 'hi' ? 'आपकी जानकारी' : 'Your Information'}</span>
+              <span>Your Information</span>
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {language === 'hi' ? 'नाम' : 'Full Name'} *
+                  Full Name *
                 </label>
                 <input
                   type="text"
@@ -277,14 +270,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder={language === 'hi' ? 'आपका पूरा नाम' : 'Enter your full name'}
+                  placeholder="Enter your full name"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Phone className="w-4 h-4 inline mr-1" />
-                  {language === 'hi' ? 'फोन नंबर' : 'Phone Number'} *
+                  Phone Number *
                 </label>
                 <input
                   type="tel"
@@ -302,7 +295,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Mail className="w-4 h-4 inline mr-1" />
-                  {language === 'hi' ? 'ईमेल' : 'Email'} (Optional)
+                  Email (Optional)
                 </label>
                 <input
                   type="email"
@@ -317,7 +310,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <MessageSquare className="w-4 h-4 inline mr-1" />
-                  {language === 'hi' ? 'व्हाट्सऐप नंबर' : 'WhatsApp Number'} (Optional)
+                  WhatsApp Number (Optional)
                 </label>
                 <input
                   type="tel"
@@ -325,7 +318,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
                   value={formData.customerWhatsapp}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder={language === 'hi' ? 'फोन नंबर से अलग हो तो' : 'If different from phone'}
+                  placeholder="If different from phone"
                 />
               </div>
             </div>
@@ -335,12 +328,12 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
               <FileText className="w-5 h-5" />
-              <span>{language === 'hi' ? 'प्रोजेक्ट की आवश्यकताएं' : 'Project Requirements'}</span>
+              <span>Project Requirements</span>
             </h3>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {language === 'hi' ? 'आपको क्या चाहिए? विस्तार से बताएं' : 'What do you need? Please describe in detail'} *
+                What do you need? Please describe in detail *
               </label>
               <textarea
                 name="requirements"
@@ -349,10 +342,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
                 required
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder={language === 'hi' 
-                  ? 'जैसे: मुझे एक ई-कॉमर्स वेबसाइट चाहिए जिसमें पेमेंट गेटवे हो...'
-                  : 'e.g., I need an e-commerce website with payment gateway...'
-                }
+                placeholder="e.g., I need an e-commerce website with payment gateway..."
               />
             </div>
 
@@ -360,7 +350,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <DollarSign className="w-4 h-4 inline mr-1" />
-                  {language === 'hi' ? 'बजट रेंज' : 'Budget Range'}
+                  Budget Range
                 </label>
                 <select
                   name="budgetRange"
@@ -369,11 +359,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">
-                    {language === 'hi' ? 'बजट चुनें' : 'Select Budget'}
+                    Select Budget
                   </option>
                   {budgetOptions.map(option => (
                     <option key={option.value} value={option.value}>
-                      {language === 'hi' ? option.labelHi : option.label}
+                      {option.label}
                     </option>
                   ))}
                 </select>
@@ -382,7 +372,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Clock className="w-4 h-4 inline mr-1" />
-                  {language === 'hi' ? 'डिलीवरी की प्राथमिकता' : 'Delivery Preference'}
+                  Delivery Preference
                 </label>
                 <select
                   name="deliveryPreference"
@@ -391,11 +381,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">
-                    {language === 'hi' ? 'समय चुनें' : 'Select Timeline'}
+                    Select Timeline
                   </option>
                   {deliveryOptions.map(option => (
                     <option key={option.value} value={option.value}>
-                      {language === 'hi' ? option.labelHi : option.label}
+                      {option.label}
                     </option>
                   ))}
                 </select>
@@ -404,7 +394,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {language === 'hi' ? 'अतिरिक्त नोट्स' : 'Additional Notes'} (Optional)
+                Additional Notes (Optional)
               </label>
               <textarea
                 name="additionalNotes"
@@ -412,10 +402,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
                 onChange={handleInputChange}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder={language === 'hi' 
-                  ? 'कोई विशेष आवश्यकता या सवाल...'
-                  : 'Any special requirements or questions...'
-                }
+                placeholder="Any special requirements or questions..."
               />
             </div>
 
@@ -425,13 +412,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
                 onFilesChange={setAttachmentFiles}
                 maxFiles={5}
                 maxSizePerFile={10}
-                label={language === 'hi' ? 'फाइलें अपलोड करें (वैकल्पिक)' : 'Upload Files (Optional)'}
+                label="Upload Files (Optional)"
               />
               <p className="text-xs text-gray-500 mt-2">
-                {language === 'hi' 
-                  ? 'आप अपनी आवश्यकताओं से संबंधित इमेज, डॉक्यूमेंट या रेफरेंस फाइलें अपलोड कर सकते हैं'
-                  : 'You can upload images, documents, or reference files related to your requirements'
-                }
+                You can upload images, documents, or reference files related to your requirements
               </p>
             </div>
           </div>
@@ -443,7 +427,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
               onClick={onClose}
               className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
             >
-              {language === 'hi' ? 'रद्द करें' : 'Cancel'}
+              Cancel
             </button>
             
             <button
@@ -456,13 +440,13 @@ const OrderForm: React.FC<OrderFormProps> = ({ isOpen, onClose, selectedService 
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   <span>
                     {uploadingFiles 
-                      ? (language === 'hi' ? 'फाइलें अपलोड हो रही हैं...' : 'Uploading files...')
-                      : (language === 'hi' ? 'सबमिट हो रहा है...' : 'Submitting...')
+                      ? 'Uploading files...'
+                      : 'Submitting...'
                     }
                   </span>
                 </>
               ) : (
-                <span>{language === 'hi' ? 'ऑर्डर सबमिट करें' : 'Submit Order'}</span>
+                <span>Submit Order</span>
               )}
             </button>
           </div>
