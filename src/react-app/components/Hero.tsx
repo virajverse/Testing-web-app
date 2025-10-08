@@ -16,19 +16,24 @@ const Hero = () => {
           {t('hero.subtitle')}
         </p>
         
-        {/* Install App Button - Only show when native prompt is available */}
-        {isInstallable && !isInstalled && (
+        {/* Install App Button - Show when not installed */}
+        {!isInstalled && (
           <div className="mb-8">
             <button
               onClick={installApp}
-              className="inline-flex items-center space-x-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-              title="Install this app for faster access and offline use"
+              className={`inline-flex items-center space-x-3 px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 ${
+                isInstallable
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-2 border-gray-300'
+              }`}
+              title={isInstallable ? "Install this app for faster access and offline use" : "Get install instructions"}
             >
               <Download className="w-6 h-6" />
               <span>{t('hero.installApp')}</span>
+              {!isInstallable && <span className="text-sm opacity-75">(Manual)</span>}
             </button>
             <p className="text-sm text-gray-500 mt-3">
-              {t('hero.installSubtext')}
+              {isInstallable ? t('hero.installSubtext') : 'Click for installation instructions'}
             </p>
           </div>
         )}

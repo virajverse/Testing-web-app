@@ -90,36 +90,51 @@ export const usePWA = () => {
     };
   }, []);
 
-  // 5. Function to trigger the native install prompt
+  // 5. Function to trigger the native install prompt or show fallback
   const installApp = async () => {
     console.log('[PWA] 🚀 Install button clicked');
     
-    if (!deferredPrompt) {
-      console.warn('[PWA] ⚠️ No install prompt available');
-      return;
-    }
-
-    try {
-      // Show the native install prompt
-      console.log('[PWA] 📱 Showing native install prompt...');
-      await deferredPrompt.prompt();
+    if (deferredPrompt) {
+      try {
+        // Show the native install prompt
+        console.log('[PWA] 📱 Showing native install prompt...');
+        await deferredPrompt.prompt();
+        
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('[PWA] 👤 User response:', outcome);
+        
+        if (outcome === 'accepted') {
+          console.log('[PWA] ✅ User accepted the install prompt');
+        } else {
+          console.log('[PWA] ❌ User dismissed the install prompt');
+        }
+        
+        // Clear the deferredPrompt so it can only be used once
+        setDeferredPrompt(null);
+        setIsInstallable(false);
+        
+      } catch (error) {
+        console.error('[PWA] ❌ Error showing install prompt:', error);
+      }
+    } else {
+      // Fallback: Show manual installation instructions
+      console.log('[PWA] ⚠️ No native prompt available, showing manual instructions');
       
-      // Wait for the user to respond to the prompt
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log('[PWA] 👤 User response:', outcome);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
       
-      if (outcome === 'accepted') {
-        console.log('[PWA] ✅ User accepted the install prompt');
+      let instructions = '';
+      
+      if (isIOS) {
+        instructions = 'To install this app on iOS:\n\n1. Tap the Share button (⬆️)\n2. Select "Add to Home Screen"\n3. Tap "Add" to install';
+      } else if (isAndroid) {
+        instructions = 'To install this app on Android:\n\n1. Tap the menu (⋮) in your browser\n2. Select "Add to Home screen"\n3. Tap "Add" to install';
       } else {
-        console.log('[PWA] ❌ User dismissed the install prompt');
+        instructions = 'To install this app:\n\n• Chrome: Menu > "Install Taliyo..."\n• Edge: Menu > "Apps" > "Install this site as an app"\n• Or look for the install icon in your address bar';
       }
       
-      // Clear the deferredPrompt so it can only be used once
-      setDeferredPrompt(null);
-      setIsInstallable(false);
-      
-    } catch (error) {
-      console.error('[PWA] ❌ Error showing install prompt:', error);
+      alert(instructions);
     }
   };
 

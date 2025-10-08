@@ -10,15 +10,15 @@ const InstallPrompt = () => {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    // Only show prompt if native install is available and not dismissed
+    // Show prompt after delay if not installed and not dismissed
     const timer = setTimeout(() => {
-      if (isInstallable && !isInstalled && !dismissed) {
+      if (!isInstalled && !dismissed) {
         setShowPrompt(true);
       }
-    }, 5000); // Wait 5 seconds to let user explore first
+    }, 8000); // Wait 8 seconds to let user explore first
 
     return () => clearTimeout(timer);
-  }, [isInstallable, isInstalled, dismissed]);
+  }, [isInstalled, dismissed]);
 
   const handleDismiss = () => {
     setDismissed(true);
@@ -30,8 +30,8 @@ const InstallPrompt = () => {
     setShowPrompt(false);
   };
 
-  // Only show if native install is available and not installed
-  if (!showPrompt || !isInstallable || isInstalled) return null;
+  // Only show if not installed and not dismissed
+  if (!showPrompt || isInstalled) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50 animate-slide-up">
@@ -44,21 +44,26 @@ const InstallPrompt = () => {
         </button>
         
         <div className="flex items-start space-x-3">
-          <div className="bg-blue-100 p-3 rounded-full">
-            <Download className="w-6 h-6 text-blue-600" />
+          <div className={`p-3 rounded-full ${isInstallable ? 'bg-blue-100' : 'bg-gray-100'}`}>
+            <Download className={`w-6 h-6 ${isInstallable ? 'text-blue-600' : 'text-gray-600'}`} />
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-gray-900 mb-1">
               {t('hero.installApp')}
+              {!isInstallable && <span className="text-xs text-gray-500 ml-2">(Manual)</span>}
             </h3>
             <p className="text-sm text-gray-600 mb-3">
-              {t('hero.installSubtext')}
+              {isInstallable ? t('hero.installSubtext') : 'Get installation instructions for your device'}
             </p>
             <button
               onClick={handleInstall}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+                isInstallable
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+              }`}
             >
-              {t('header.install')}
+              {isInstallable ? t('header.install') : 'Get Instructions'}
             </button>
           </div>
         </div>

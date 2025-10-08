@@ -65,12 +65,16 @@ const Header = () => {
               </a>
             )}
             
-            {/* Install App Button - Only show when native prompt is available */}
-            {isInstallable && !isInstalled && (
+            {/* Install App Button - Show when installable OR as fallback */}
+            {!isInstalled && (
               <button
                 onClick={installApp}
-                className="flex items-center space-x-1 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
-                title="Install this app on your device"
+                className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors shadow-sm ${
+                  isInstallable 
+                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+                title={isInstallable ? "Install this app on your device" : "Install app (manual instructions)"}
               >
                 <Download className="w-4 h-4" />
                 <span className="text-sm font-medium">
